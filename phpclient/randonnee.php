@@ -1,29 +1,20 @@
 <?php
+require 'vendor/autoload.php';
 
-include('config/settings.php');
-try {
-    $pdo = new PDO(
-            sprintf(
-                    'mysql:host=%s;dbname=%s;port=%s;charset=%s', $settings['host'], $settings['name'], $settings['port'], $settings['charset']
-            ), $settings['username'], $settings['password']
-    );
-} catch (PDOException $e) {
-    /* Database connection failed
-     * http://php.net/manual/fr/class.pdoexception.php
-     */
-    echo "connexion à la BDD echoue, cause ",$e->getMessage();
-    exit;
-}
+use Jpmena\Databases\Mysql\Model\Database;
 
-$sql = 'SELECT cle, date, titre, itineraire FROM randonnees WHERE typeRando = :type order by :order :updown';
-$statement = $pdo->prepare($sql);
+$texte_requete_sql = 'SELECT cle, date, titre, itineraire FROM randonnees WHERE typeRando = :type order by :order :updown';
+$parametres_a_lier = [
+    ':type' => 'Journée',
+    ':order' => 'date',
+    ':updown' => 'DESC',
+];
 
-$statement->bindValue(':type', 'Journée');
-$statement->bindValue(':order', 'date');
-$statement->bindValue(':updown', 'DESC');
+$rif_mysql = new Database();
+$statement = $rif_mysql->executeRequeteUnitaire($texte_requete_sql, $parametres_a_lier);
 
-$statement->execute();
-// Iterate results
+print_r($statement);
+
 while (($result = $statement->fetchObject()) !== false) {
     echo "Numero: " . $result->cle . " le " . $result->date . " titre:" . $result->titre . " vers ->" . $result->itineraire . "\n";
 }
