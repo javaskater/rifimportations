@@ -89,13 +89,21 @@ class Database {
     public function executeRequeteUnitaire($sqlCommmandText, $bindParameters) {
         if ($this->pdo != NULL) {
             $requeteUnitaire = $this->pdo->prepare($sqlCommmandText);
-            print_r($bindParameters);
+            echo "sql: $sqlCommmandText\n";
+            //print_r($bindParameters);
             foreach ($bindParameters as $bindCle => $bindValeur) {
-                $requeteUnitaire->bindParam($bindCle, $bindValeur);
-                //print_r($bindCle);
+                //echo "à lier|$bindCle|=>|$bindValeur| \n";
+                $requeteUnitaire->bindValue($bindCle, $bindValeur); 
+                /*et non pas bindparam car sinon il attend 
+                 * une référence et ne fait rien!!!!
+                 */
             }
-            $requeteUnitaire->execute();
-            return $requeteUnitaire;
+            /*$requeteUnitaire->bindValue(':type', 'Journée'); 
+            $requeteUnitaire->bindValue(':order', 'date');
+            $requeteUnitaire->bindValue(':updown', 'DESC');*/
+            $resultRequete = $requeteUnitaire->execute();
+            //print_r($result);
+            return array('res'=> $resultRequete,'req' => $requeteUnitaire);
         }
     }
 
