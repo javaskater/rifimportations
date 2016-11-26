@@ -50,13 +50,19 @@ class Database {
      * la donnée à appliquer à cet emplacement de la requête
      * Ajoute la requête une fois préparée à la liste de requêtes ppour transaction
      */
-    public function prepareRequetePourTransaction($sqlCommmandText, $bindParameters) {
+    public function prepareRequetePourTransaction($sqlCommmandText, $bindParameters, $log_text = NULL) {
         if ($this->pdo != NULL) {
-            $stmtRequete = $pdo->prepare($sqlCommmandText);
+            $stmtRequete = $this->pdo->prepare($sqlCommmandText);
             foreach ($bindParameters as $bindCle => $bindValeur) {
                 $stmtRequete->bindParam($bindCle, $bindValeur);
             }
-            $this->stmt_queries[] = $stmtRequete;
+            $my_query=[
+                'sql_text' => $sqlCommmandText,
+                'bind_parameters' => $bindParameters,
+                'prepared_statement' => $stmtRequete,
+                'log_text' => $log_text
+            ];
+            $this->stmt_queries[] = $my_query;
         }
     }
 
@@ -67,14 +73,17 @@ class Database {
      * prévue
      */
     public function executeTransaction() {
+        $result = FALSE;
         if (count($this->stmt_queries) > 0) {
             $this->pdo->beginTransaction();
             foreach ($this->stmt_queries as $requeteDansTransaction) {
-                $requeteDansTransaction->execute();
+                var_dump($requeteDansTransaction['prepared_statement']);
+                $requeteDansTransaction['prepared_statement']->execute();
             }
-            $this->pdo->commit();
+            $result = $this->pdo->commit();
             $this->stmt_queries=[];
         }
+        return $result;
     }
 
     
