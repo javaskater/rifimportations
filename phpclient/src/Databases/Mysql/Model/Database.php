@@ -56,7 +56,7 @@ class Database {
         if ($this->pdo != NULL) {
             $stmtRequete = $this->pdo->prepare($sqlCommmandText);
             foreach ($bindParameters as $bindCle => $bindValeur) {
-                $stmtRequete->bindParam($bindCle, $bindValeur);
+                $stmtRequete->bindValue($bindCle, $bindValeur);
             }
             $my_query=[
                 'sql_text' => $sqlCommmandText,
@@ -86,7 +86,13 @@ class Database {
                 foreach ($this->stmt_queries as $requeteDansTransaction) {
                     //var_dump($requeteDansTransaction['prepared_statement']);
                     echo "executing mysql request:".$requeteDansTransaction['log_text']."\n";
-                    $requeteDansTransaction['prepared_statement']->execute();
+                    $preparedStatement = $requeteDansTransaction['prepared_statement'];
+                    $preparedStatement->debugDumpParams();
+                    $res = $preparedStatement->execute();
+                    if (!$res) {
+                        echo "problème à l'exécution du statement \n";
+                        throw new \PDOException('Requete terminée avec Code KO',-99);
+                    }
                     $requetesExecutees[] = $requeteDansTransaction;
                 }
                 $this->pdo->commit();
@@ -128,6 +134,7 @@ class Database {
             $requeteUnitaire->bindValue(':order', 'date');
             $requeteUnitaire->bindValue(':updown', 'DESC');*/
             $resultRequete = $requeteUnitaire->execute();
+            //$requeteUnitaire->debugDumpParams();
             //print_r($result);
             return array('res'=> $resultRequete,'req' => $requeteUnitaire);
         }

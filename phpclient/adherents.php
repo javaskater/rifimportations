@@ -5,7 +5,8 @@ require 'vendor/autoload.php';
 use Jpmena\Databases\Mysql\Controller\RifImporter;
 
 $mysql_settings = [
-    'host' => '192.168.56.101',
+    //'host' => '192.168.56.101',
+    'host' => '127.0.0.1',
     'port' => '3306',
     'name' => 'rif',
     'username' => 'rif',
@@ -20,11 +21,13 @@ $mysql_settings = [
  */
 
 $liste_parametres_imports = array(['bind_parameters' => [
-            ':fichier_csv' => "/home/jpmena/RIF/importations/adherents.csv",
-            ':table_mysql' => "adherents",
-            ':liste_colonnes_pour_mysqldump' => "numero,@temp,@temp,@temp,@temp,@temp,codepostal,@temp,@temp,@temp,@temp,@temp,@temp,@temp,@temp,@temp,@temp,expiration",
+            //':fichier_csv' => "/home/jpmena/RIF/importations/adherents.csv",
+            //':table_mysql' => "adherents",
+            //':liste_colonnes_pour_mysqldump' => 'numero,@temp,@temp,@temp,@temp,@temp,codepostal,@temp,@temp,@temp,@temp,@temp,@temp,@temp,@temp,@temp,@temp,expiration',
             ],
-        'sql_command_text' => "LOAD DATA LOCAL INFILE :fichier_csv REPLACE INTO TABLE :table_mysql CHARACTER SET 'utf8' FIELDS OPTIONALLY ENCLOSED BY \" TERMINATED BY , LINES TERMINATED BY \n IGNORE 1 LINES (:liste_colonnes_pour_mysqldump)",
+        //'sql_command_text' => "LOAD DATA INFILE :fichier_csv REPLACE INTO TABLE :table_mysql CHARACTER SET 'utf8' FIELDS OPTIONALLY ENCLOSED BY \" TERMINATED BY , LINES TERMINATED BY \n IGNORE 1 LINES (:liste_colonnes_pour_mysqldump)",
+        //'sql_command_text' => "LOAD DATA LOCAL INFILE '/home/jpmena/RIF/importations/adherents.csv' REPLACE INTO TABLE adherents CHARACTER SET 'utf8' FIELDS OPTIONALLY ENCLOSED BY '\"' TERMINATED BY ',' LINES TERMINATED BY '\n' IGNORE 1 LINES (numero,@temp,@temp,@temp,@temp,@temp,codepostal,@temp,@temp,@temp,@temp,@temp,@temp,@temp,@temp,@temp,@temp,expiration)",
+        'sql_command_text' =>  "LOAD DATA INFILE '/home/jpmena/RIF/importations/adherents.csv' REPLACE INTO TABLE adherents CHARACTER SET 'utf8' FIELDS OPTIONALLY ENCLOSED BY '\"' TERMINATED BY ',' LINES TERMINATED BY '\\n' IGNORE 1 LINES (numero,@temp,@temp,@temp,@temp,@temp,codepostal,@temp,@temp,@temp,@temp,@temp,@temp,@temp,@temp,@temp,@temp,expiration)",
         'log_text' => "Importation des adherents",
     ],
     ['bind_parameters' => [],
