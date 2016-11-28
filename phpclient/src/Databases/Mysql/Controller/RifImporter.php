@@ -33,10 +33,10 @@ class RifImporter {
             $log_text = $parametres_imports['log_text'];
             $this->myDatabaseModel->prepareRequetePourTransaction($sqlCommmandText, $bindParameters, $log_text);
         }
-        $resultat_transaction = $this->myDatabaseModel->executeTransaction();
+        $resultat_transaction_array = $this->myDatabaseModel->executeTransaction();
         return [
             'parametres_imports_array' => $parametres_imports_array,
-            'resultat_transaction' => $resultat_transaction
+            'resultat_transaction' => $resultat_transaction_array
         ];
     }
 }
