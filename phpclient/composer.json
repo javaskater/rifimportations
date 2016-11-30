@@ -3,5 +3,8 @@
         "psr-4": {
             "Jpmena\\": "src/"
         }
+    },
+    "require": {
+        "league/csv": "^8.1"
     }
 }
