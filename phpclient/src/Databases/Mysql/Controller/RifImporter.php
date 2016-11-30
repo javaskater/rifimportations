@@ -38,7 +38,7 @@ class RifImporter {
                         foreach ($bindkeys_csvpos as $bindkey => $csvpos) {
                             $bindParameters[$bindkey] =  $csvRow[$csvpos];
                         }
-                        print_r($bindParameters);
+                        //print_r($bindParameters);
                         $sqlCommmandText = $parametres_imports['sql_command_text'];
                         $log_text = $parametres_imports['log_text'];
                         $this->myDatabaseModel->prepareRequetePourTransaction($sqlCommmandText, $bindParameters, $log_text);

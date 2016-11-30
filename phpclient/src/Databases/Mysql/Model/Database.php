@@ -87,7 +87,7 @@ class Database {
                     //var_dump($requeteDansTransaction['prepared_statement']);
                     echo "executing mysql request:".$requeteDansTransaction['log_text']."\n";
                     $preparedStatement = $requeteDansTransaction['prepared_statement'];
-                    $preparedStatement->debugDumpParams();
+                    //$preparedStatement->debugDumpParams();
                     $res = $preparedStatement->execute();
                     if (!$res) {
                         echo "problème à l'exécution du statement \n";

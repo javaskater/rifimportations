@@ -54,3 +54,16 @@ jpmena@jpmena-P34 ~/RIF/rifimportations/phpclient (master *=) $ cat composer.jso
 
 * est remplacé par une suite de commande REPLACE / MYSQL
   * cf. [lien officiel Mysql 5.5](https://dev.mysql.com/doc/refman/5.5/en/replace.html)
+
+
+# Il reste
+
+## au 30/11/2016
+
+``` bash
+jpmena@jpmena-P34 ~/RIF/rifimportations/phpclient (master *=) $ php adherents.php > adh.log 
+PHP Notice:  Undefined index: fichier_csv in /home/jpmena/RIF/rifimportations/phpclient/src/Databases/Mysql/Controller/RifImporter.php on line 31
+PHP Stack trace:
+PHP   1. {main}() /home/jpmena/RIF/rifimportations/phpclient/adherents.php:0
+PHP   2. Jpmena\Databases\Mysql\Controller\RifImporter->importerDonneesCsvEtValider() /home/jpmena/RIF/rifimportations/phpclient/adherents.php:50
+```

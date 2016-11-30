@@ -37,7 +37,7 @@ $liste_parametres_imports = [
         'fichier_csv' => "/home/jpmena/RIF/importations/adherents.csv",
         'csv_to_bind_parameters' => [':numero' => 0, ':codepostal' => 6, ':expiration' => 17],
         'sql_command_text' => "REPLACE adherents set numero = :numero, codepostal = :codepostal, expiration = :expiration", //aura t'on un problème avec la date AAAA-MM-JJ ?
-        'log_text' => "Importation des adherents"
+        'log_text' => "Importation / mise à jour d'un adherent"
     ],
         ['bind_parameters' => [],
         'sql_command_text' => "update users, adherents set users.expiration = adherents.expiration where users.username = adherents.numero",
