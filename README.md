@@ -107,17 +107,7 @@ jpmena@jpmena-P34 ~/RIF/rifimportations/phpclient (master *=) $ cat composer.jso
 
 ## au 3/12/2016
 
-### une erreur
-
-``` bash
-jpmena@jpmena-P34 ~/RIF/rifimportations/phpclient (master *=) $ php adherents.php > adh.log 
-PHP Notice:  Undefined index: fichier_csv in /home/jpmena/RIF/rifimportations/phpclient/src/Databases/Mysql/Controller/RifImporter.php on line 31
-PHP Stack trace:
-PHP   1. {main}() /home/jpmena/RIF/rifimportations/phpclient/adherents.php:0
-PHP   2. Jpmena\Databases\Mysql\Controller\RifImporter->importerDonneesCsvEtValider() /home/jpmena/RIF/rifimportations/phpclient/adherents.php:50
-```
- * à résoudre
-
+* __adherents.php__ et __animateurs.php__ OK !!!
 
 ### Log OK mais peut être mieux exploitée
 
@@ -130,3 +120,9 @@ PHP   2. Jpmena\Databases\Mysql\Controller\RifImporter->importerDonneesCsvEtVali
 [2016-12-03 08:57:15] adherents.DEBUG: executing mysql request:Mise à jour de la table users [] []
 [2016-12-03 08:57:15] adherents.DEBUG: Ending transaction with success [] []
 ```
+
+### sortir certains paramètres dans un fichier _setting.php_
+
+* Je pense à ce qui est commun à tous les _imports/nettoyages_, notamment
+  * les coordonnées d'acccès à la BDD
+  * le répertoire d'accueil des logs !!!

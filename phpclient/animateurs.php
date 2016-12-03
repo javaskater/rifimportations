@@ -33,23 +33,27 @@ $mysql_settings = [
  */
 
 $liste_parametres_imports = [
+        ['bind_parameters' => [],
+        'sql_command_text' => "update users set role = NULL where role = 'animateur'",
+        'log_text' => "Préparation de la table users pour les animteurs avant import csv",
+    ],
         [
-        'fichier_csv' => "/home/jpmena/RIF/importations/adherents.csv",
-        'csv_to_bind_parameters' => [':numero' => 0, ':codepostal' => 6, ':expiration' => 17],
-        'sql_command_text' => "REPLACE adherents set numero = :numero, codepostal = :codepostal, expiration = :expiration", //Pas de problème avec la date AAAA-MM-JJ ?
-        'log_text' => "Importation / mise à jour d'un adherent"
+        'fichier_csv' => "/home/jpmena/RIF/importations/animateurs.csv",
+        'csv_to_bind_parameters' => [':numero' => 0, ':surnom' => 1],
+        'sql_command_text' => "UPDATE animateurs set numero = :numero, surnom = :surnom where numero = :numero", //Ici update et non REPLACE car les autres champs doivent rester les mêmes !!!
+        'log_text' => "Mise à jour d'un animateur"
     ],
         ['bind_parameters' => [],
-        'sql_command_text' => "update users, adherents set users.expiration = adherents.expiration where users.username = adherents.numero",
-        'log_text' => "Mise à jour de la table users",
+        'sql_command_text' => "update users set role = 'animateur' where `username` in (select numero from animateurs) and (role <> 'admin' OR role is null)",
+        'log_text' => "Mise à jour de la table users pour les animteurs suite à import csv",
     ]
 ];
 
 $dateLog = new \DateTime();
 
 $log_array = [
-    'path' => dirname(__FILE__)."/adherents_".$dateLog->format('Y-m-d_H:i:s').".log",
-    'name' => "adherents"
+    'path' => dirname(__FILE__) . "/animateurs_" . $dateLog->format('Y-m-d_H:i:s') . ".log",
+    'name' => "animateurs"
 ];
 
 $adherentsImporter = new RifImporter($log_array['path'], $log_array['name'], $mysql_settings);
