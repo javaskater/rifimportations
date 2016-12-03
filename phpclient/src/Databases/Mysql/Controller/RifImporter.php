@@ -33,7 +33,8 @@ class RifImporter {
      */
     public function importerDonneesCsvEtValider($parametres_imports_array) {
         foreach ($parametres_imports_array as $parametres_imports) {
-            if ($parametres_imports['fichier_csv'] && file_exists($parametres_imports['fichier_csv'])) {
+            //var_dump($parametres_imports);
+            if (array_key_exists ( 'fichier_csv' , $parametres_imports ) && file_exists($parametres_imports['fichier_csv'])) {
                 $csv = \League\Csv\Reader::createFromPath($parametres_imports['fichier_csv']);
                 $firstline = TRUE;
                 foreach ($csv as $csvRow) {
