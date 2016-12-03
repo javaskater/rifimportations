@@ -5,6 +5,7 @@
         }
     },
     "require": {
-        "league/csv": "^8.1"
+        "league/csv": "^8.1",
+        "monolog/monolog": "^1.22"
     }
 }

@@ -45,9 +45,20 @@ $liste_parametres_imports = [
     ]
 ];
 
-$adherentsImporter = new RifImporter($mysql_settings);
+$dateLog = new \DateTime();
 
-$adherentsImporter->importerDonneesCsvEtValider($liste_parametres_imports);
+$log_array = [
+    'path' => dirname(__FILE__)."/adherents_".$dateLog->format('Y-m-d_H:i:s').".log",
+    'name' => "adherents"
+];
+
+$adherentsImporter = new RifImporter($log_array['path'], $log_array['name'], $mysql_settings);
+
+$resulat = $adherentsImporter->importerDonneesCsvEtValider($liste_parametres_imports);
+/*
+ * Returns true or false pour le CRON OVH
+ */
+return $resulat['resultat_transaction']['res_t'];
 
 
 

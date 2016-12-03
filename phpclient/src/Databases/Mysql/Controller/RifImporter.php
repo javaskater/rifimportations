@@ -2,6 +2,7 @@
 
 namespace Jpmena\Databases\Mysql\Controller;
 
+use Jpmena\Databases\Mysql\Helper\LoggerTrait;
 use Jpmena\Databases\Mysql\Model\Database;
 
 /**
@@ -12,9 +13,13 @@ use Jpmena\Databases\Mysql\Model\Database;
 class RifImporter {
 
     private $myDatabaseModel;
+    
+    use LoggerTrait;
 
-    public function __construct($mysql_settings = NULL) {
+    public function __construct($chemin_log, $nom_log, $mysql_settings = NULL) {
+        $this->openLogFile($chemin_log, $nom_log);
         $this->myDatabaseModel = new Database($mysql_settings);
+        $this->myDatabaseModel->importExistingLogger($this->exportExistingLogger());
     }
 
     /**

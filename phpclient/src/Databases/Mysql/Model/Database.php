@@ -2,12 +2,16 @@
 
 namespace Jpmena\Databases\Mysql\Model;
 
+use Jpmena\Databases\Mysql\Helper\LoggerTrait;
+
 /**
  * Description of Database
  *
  * @author jpmena
  */
 class Database {
+    
+    use LoggerTrait;
 
     public static $default_settings = [
         'host' => '192.168.56.101',
@@ -40,7 +44,7 @@ class Database {
             /* Database connection failed
              * http://php.net/manual/fr/class.pdoexception.php
              */
-            echo "connexion à la BDD echoue, cause ", $e->getMessage();
+            $this->error("connexion à la BDD echoue, cause ", $e->getMessage());
             exit;
         }
     }
@@ -80,27 +84,27 @@ class Database {
         $resultTransaction = FALSE;
         $requetesExecutees = [];
         if (count($this->stmt_queries) > 0) {
-            echo "Starting transaction \n";
+            $this->debug("Starting transaction");
             $this->pdo->beginTransaction();
             try {
                 foreach ($this->stmt_queries as $requeteDansTransaction) {
                     //var_dump($requeteDansTransaction['prepared_statement']);
-                    echo "executing mysql request:".$requeteDansTransaction['log_text']."\n";
+                    $this->debug("executing mysql request:".$requeteDansTransaction['log_text']);
                     $preparedStatement = $requeteDansTransaction['prepared_statement'];
                     //$preparedStatement->debugDumpParams();
                     $res = $preparedStatement->execute();
                     if (!$res) {
-                        echo "problème à l'exécution du statement \n";
+                        $this->error("problème à l'exécution du statement");
                         throw new \PDOException('Requete terminée avec Code KO',-99);
                     }
                     $requetesExecutees[] = $requeteDansTransaction;
                 }
                 $this->pdo->commit();
-                echo "Ending transaction with success \n";
+                $this->debug("Ending transaction with success");
             }catch (\PDOException $pdoe){
                 $c = $pdoe->getCode();
                 $m = $pdoe->getMessage();
-                echo "Ending transaction with failure; code: $c,message: $m \n";
+                $this->error("Ending transaction with failure; code: $c,message: $m");
             } finally {
                 $this->stmt_queries=[];
                 return array('res_t'=> $resultTransaction,'reqs_t' => $requetesExecutees);
@@ -121,7 +125,7 @@ class Database {
     public function executeRequeteUnitaire($sqlCommmandText, $bindParameters) {
         if ($this->pdo != NULL) {
             $requeteUnitaire = $this->pdo->prepare($sqlCommmandText);
-            echo "sql: $sqlCommmandText\n";
+            $this->debug("sql: $sqlCommmandText");
             //print_r($bindParameters);
             foreach ($bindParameters as $bindCle => $bindValeur) {
                 //echo "à lier|$bindCle|=>|$bindValeur| \n";
