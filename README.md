@@ -1,4 +1,50 @@
-# Composer
+# Installation et Usage
+
+## Installation
+
+* Dézipper sur le serveur OVH à l'endroit que vous aurez choisi l'archive fournie
+  * (Première archive fournie __rifimportations_2016-12-04_08:55:11.zip__)
+
+## Paramétrage
+
+* éditer le fichier __rifimportations/phpclient/config/settings.php__ (chemin relatif à l'archive)
+* on édite en particulier le tableau __$mysql_settings__ qui contient les paramètres relatifs à la base de données :
+  * dans le cas ci dessous, 
+    * le serveur est _localhost_
+    * le nom de la base est _rif_
+    * l'utilisateur correspondant de la base est _rif_ et son mot de passe est _rif_
+
+``` php
+$mysql_settings = [
+    'host' => '127.0.0.1',
+    'port' => '3306',
+    'name' => 'rif',
+    'username' => 'rif',
+    'password' => 'rif',
+    'charset' => 'utf8'
+];
+```
+
+* on édite également le tableau __$chemins_fichiers__  qui recenseles répertoires où vous souhaitez voir apparaître:
+  * Le répertoire où se trouveront les Logs relatives aux traitements: cf. clé *repertoire_log* du tableau en question cf.  ci dessous
+  * Le répertoire où se trouveront les données au format csv: cf. clé *repertoire_csv* du tableau en question cf.  ci dessous
+
+``` php
+$chemins_fichiers = [
+    'repertoire_csv' => '/home/jpmena/RIF/importations',
+    'repertoire_log' => '/home/jpmena/RIF',
+];
+```
+
+## Programmation des traitements
+
+* programmer via la planificateur OVH l'exécution avec le langage __php 5.6__ des fichiers:
+  * _rifimportations/phpclient/adherents.php_ pour l'importations et la mise à jour des adhérents
+  * _rifimportations/phpclient/animateurs.php_ pour l'importations et la mise à jour des animateurs
+
+# La Conception
+
+## Composer
 
 * A l'origine j'ai déclaré que tout namespace commençant par _Jpmena_
   * a ses source sous le répertoire 'src'
@@ -14,7 +60,7 @@
     }
 ```
 
-## ajout de league/csv
+### ajout de league/csv
 
 * Nous avons besoins de lire efficaement lees fichiers csv pour importer des données en table Mysql
   * En suivant l'exemple _scanner.php_ du livre __modern php__ (chapitre 4 composer)
@@ -48,14 +94,14 @@ jpmena@jpmena-P34 ~/RIF/rifimportations/phpclient (master *=) $ cat composer.jso
 ```
 
 
-# Modifications
+## Modifications
 
-## le LOAD FILE REPLACE 
+### le LOAD FILE REPLACE 
 
 * est remplacé par une suite de commande REPLACE / MYSQL
   * cf. [lien officiel Mysql 5.5](https://dev.mysql.com/doc/refman/5.5/en/replace.html)
 
-# Ajout de monolog pour loguer:
+## Ajout de monolog pour loguer:
 
 * Remplacer les commandes echo par une trace log !!!
   * _cf. OReilly / Modern PHP chapitre 5_  sous partie Exception ....
@@ -100,8 +146,7 @@ jpmena@jpmena-P34 ~/RIF/rifimportations/phpclient (master *=) $ cat composer.jso
     }
 }
 ```
-
-## 
+ 
 
 # Il reste
 
