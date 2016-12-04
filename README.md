@@ -126,3 +126,7 @@ jpmena@jpmena-P34 ~/RIF/rifimportations/phpclient (master *=) $ cat composer.jso
 * Je pense à ce qui est commun à tous les _imports/nettoyages_, notamment
   * les coordonnées d'acccès à la BDD
   * le répertoire d'accueil des logs !!!
+
+## au 3/12/2016
+
+* la configuration a été exportée ....

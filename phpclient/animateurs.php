@@ -1,30 +1,9 @@
 <?php
 
 require 'vendor/autoload.php';
+require 'config/settings.php';
 
 use Jpmena\Databases\Mysql\Controller\RifImporter;
-
-/* $mysql_settings = [
-  'host' => '192.168.56.101',
-  =======
-  $mysql_settings = [
-  //'host' => '192.168.56.101',
-  'host' => '127.0.0.1',
-  'port' => '3306',
-  'name' => 'rif',
-  'username' => 'rif',
-  'password' => 'rif',
-  'charset' => 'utf8'
-  ]; */
-
-$mysql_settings = [
-    'host' => '127.0.0.1',
-    'port' => '3306',
-    'name' => 'rif',
-    'username' => 'rif',
-    'password' => 'rif',
-    'charset' => 'utf8'
-];
 
 /*
  * Le the array of requests to be achieved in the smae transaction!
@@ -38,7 +17,7 @@ $liste_parametres_imports = [
         'log_text' => "Préparation de la table users pour les animteurs avant import csv",
     ],
         [
-        'fichier_csv' => "/home/jpmena/RIF/importations/animateurs.csv",
+        'fichier_csv' => $chemins_fichiers['repertoire_csv']."/animateurs.csv",
         'csv_to_bind_parameters' => [':numero' => 0, ':surnom' => 1],
         'sql_command_text' => "UPDATE animateurs set numero = :numero, surnom = :surnom where numero = :numero", //Ici update et non REPLACE car les autres champs doivent rester les mêmes !!!
         'log_text' => "Mise à jour d'un animateur"
@@ -52,7 +31,7 @@ $liste_parametres_imports = [
 $dateLog = new \DateTime();
 
 $log_array = [
-    'path' => dirname(__FILE__) . "/animateurs_" . $dateLog->format('Y-m-d_H:i:s') . ".log",
+    'path' => $chemins_fichiers['repertoire_log']."/animateurs_" . $dateLog->format('Y-m-d_H:i:s') . ".log",
     'name' => "animateurs"
 ];
 
