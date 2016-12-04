@@ -206,4 +206,56 @@ Writing lock file
 Generating autoload files
 archive: /home/jpmena/RIF/tmp/rifimportations_2016-12-04_08:55:11.zip après ajout de la partie composer/vendor
 ```
- 
+
+### Le CRON sur machine virtuelle Debian / PHP 5.6 (VirtualBox)
+
+* Finalement le test est > 0 à
+
+``` bash
+jpmena@rifovh:~$ crontab -l
+# Edit this file to introduce tasks to be run by cron.
+# 
+# Each task to run has to be defined through a single line
+# indicating with different fields when the task will be run
+# and what command to run for the task
+# 
+# To define the time you can provide concrete values for
+# minute (m), hour (h), day of month (dom), month (mon),
+# and day of week (dow) or use '*' in these fields (for 'any').# 
+# Notice that tasks will be started based on the cron's system
+# daemon's notion of time and timezones.
+# 
+# Output of the crontab jobs (including errors) is sent through
+# email to the user the crontab file belongs to (unless redirected).
+# 
+# For example, you can run a backup of all your user accounts
+# at 5 a.m every week with:
+# 0 5 * * 1 tar -zcf /var/backups/home.tgz /home/
+# 
+# For more information see the manual pages of crontab(5) and cron(8)
+# 
+# m h  dom mon dow   command
+35 10 * * * php /home/jpmena/RIF/rifimportations/phpclient/adherents.php
+45 10 * * * php /home/jpmena/RIF/rifimportations/phpclient/animateurs.php
+```
+
+* on retrouve bien les logs avec succès sur la machine virtuelle:
+
+``` bash
+jpmena@rifovh:~$ tail -5 RIF/adherents_2016-12-04_10\:35\:01.log 
+[2016-12-04 10:35:01] adherents.DEBUG: executing mysql request:Importation / mise à jour d'un adherent [] []
+[2016-12-04 10:35:01] adherents.DEBUG: executing mysql request:Importation / mise à jour d'un adherent [] []
+[2016-12-04 10:35:01] adherents.DEBUG: executing mysql request:Importation / mise à jour d'un adherent [] []
+[2016-12-04 10:35:01] adherents.DEBUG: executing mysql request:Mise à jour de la table users [] []
+[2016-12-04 10:35:01] adherents.DEBUG: Ending transaction with success [] []
+jpmena@rifovh:~$ tail -5 RIF/animateurs_2016-12-04_10\:45\:01.log 
+[2016-12-04 10:45:01] animateurs.DEBUG: executing mysql request:Mise à jour d'un animateur [] []
+[2016-12-04 10:45:01] animateurs.DEBUG: executing mysql request:Mise à jour d'un animateur [] []
+[2016-12-04 10:45:01] animateurs.DEBUG: executing mysql request:Mise à jour d'un animateur [] []
+[2016-12-04 10:45:01] animateurs.DEBUG: executing mysql request:Mise à jour de la table users pour les animteurs suite à import csv [] []
+[2016-12-04 10:45:01] animateurs.DEBUG: Ending transaction with success [] []
+```
+## TODO
+
+* mettre en place un mode d'emploi sur cette documentation
+
