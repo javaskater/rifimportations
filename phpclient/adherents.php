@@ -1,7 +1,7 @@
 <?php
 
-require 'vendor/autoload.php';
-require 'config/settings.php';
+require __DIR__ .'/vendor/autoload.php';
+require __DIR__ .'/config/settings.php';
 
 use Jpmena\Databases\Mysql\Controller\RifImporter;
 
@@ -27,7 +27,7 @@ $liste_parametres_imports = [
 $dateLog = new \DateTime();
 
 $log_array = [
-    'path' => $chemins_fichiers['repertoire_log']."/adherents_".$dateLog->format('Y-m-d_H:i:s').".log",
+    'path' => $chemins_fichiers['repertoire_log']."/adherents_".$dateLog->format('Y-m-d_His').".log",
     'name' => "adherents"
 ];
 

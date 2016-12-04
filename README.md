@@ -3,7 +3,7 @@
 ## Installation
 
 * Dézipper sur le serveur OVH à l'endroit que vous aurez choisi l'archive fournie
-  * (Première archive fournie __rifimportations_2016-12-04_08:55:11.zip__)
+  * (Première archive fournie __rifimportations_2016-12-04_214002.zip__)
 
 ## Paramétrage
 

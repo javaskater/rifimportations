@@ -6,7 +6,7 @@ client_repertoire=$projet_repertoire/phpclient
 archive_repertoire=$(dirname $projet_repertoire)/tmp
 #echo "$archive_repertoire"
 nom_module=$(basename $projet_repertoire)
-nom_archive=${nom_module}_$(date +%Y-%m-%d_%H:%M:%S).zip
+nom_archive=${nom_module}_$(date +%Y-%m-%d_%H%M%S).zip
 archive_abs_path=$archive_repertoire/$nom_archive
 #echo "$archive_abs_path"
 
@@ -40,6 +40,6 @@ zip -rqq $nom_archive ${nom_module}
 
 echo "archive: $archive_abs_path après ajout de la partie composer/vendor"
 
-#unzip -l $nom_archive
+unzip -l $nom_archive
 
-#cd $init_repertoire
+cd $init_repertoire
