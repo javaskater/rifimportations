@@ -127,6 +127,83 @@ jpmena@jpmena-P34 ~/RIF/rifimportations/phpclient (master *=) $ cat composer.jso
   * les coordonnées d'acccès à la BDD
   * le répertoire d'accueil des logs !!!
 
-## au 3/12/2016
+## au 4/12/2016
 
 * la configuration a été exportée ....
+
+### Log OK mais peut être mieux exploitée
+
+* Mais apparemment on peut l'enrichir voir [le site du créateur de Monolog](https://github.com/Seldaek/monolog)
+  * pourquoi les _[][]_ ??? (cf. ci dessus)
+* faut il envoyer la log par mail ? (cas notamment de result KO)
+  * et supprimer ensuite le fichier ?
+
+### Faire tester par CRON 
+
+* le script de livraison _rifimportations/scripts/gitarchive.sh_ fonctionne enfin
+  * il exporte la partie git
+  * et il relance composer pour reconstruire la parrtie vendor non exxportée sous github !!!
+  * il fait un zip de l'ensemble
+
+``` bash
+jpmena@jpmena-P34 ~/RIF/rifimportations/scripts (master *=) $ ./gitarchive.sh 
+archive git: /home/jpmena/RIF/tmp/rifimportations_2016-12-04_08:55:11.zip générée pour la branche: master; contenu:
+Archive:  /home/jpmena/RIF/tmp/rifimportations_2016-12-04_08:55:11.zip
+136b97790497fbecf26be729e9a275fa4d644ed1
+  Length      Date    Time    Name
+---------  ---------- -----   ----
+        0  2016-12-04 08:39   rifimportations/
+       28  2016-12-04 08:39   rifimportations/.gitignore
+     4767  2016-12-04 08:39   rifimportations/README.md
+        0  2016-12-04 08:39   rifimportations/phpclient/
+     1510  2016-12-04 08:39   rifimportations/phpclient/adherents.php
+     1780  2016-12-04 08:39   rifimportations/phpclient/animateurs.php
+      177  2016-12-04 08:39   rifimportations/phpclient/composer.json
+        0  2016-12-04 08:39   rifimportations/phpclient/config/
+      560  2016-12-04 08:39   rifimportations/phpclient/config/settings.php
+      683  2016-12-04 08:39   rifimportations/phpclient/randonnee.php
+        0  2016-12-04 08:39   rifimportations/phpclient/src/
+        0  2016-12-04 08:39   rifimportations/phpclient/src/Databases/
+        0  2016-12-04 08:39   rifimportations/phpclient/src/Databases/Mysql/
+        0  2016-12-04 08:39   rifimportations/phpclient/src/Databases/Mysql/Controller/
+     2713  2016-12-04 08:39   rifimportations/phpclient/src/Databases/Mysql/Controller/RifImporter.php
+        0  2016-12-04 08:39   rifimportations/phpclient/src/Databases/Mysql/Helper/
+     1224  2016-12-04 08:39   rifimportations/phpclient/src/Databases/Mysql/Helper/LoggerTrait.php
+        0  2016-12-04 08:39   rifimportations/phpclient/src/Databases/Mysql/Model/
+     5998  2016-12-04 08:39   rifimportations/phpclient/src/Databases/Mysql/Model/Database.php
+        0  2016-12-04 08:39   rifimportations/phpclient/vendor/
+      178  2016-12-04 08:39   rifimportations/phpclient/vendor/autoload.php
+        0  2016-12-04 08:39   rifimportations/scripts/
+      945  2016-12-04 08:39   rifimportations/scripts/gitarchive.sh
+---------                     -------
+    20563                     23 files
+il nous faut ajouter la partie vendor ..
+ajout de la partie vendor via composer
+You are running composer with xdebug enabled. This has a major impact on runtime performance. See https://getcomposer.org/xdebug
+Loading composer repositories with package information
+Updating dependencies (including require-dev)
+  - Installing psr/log (1.0.2)
+    Loading from cache
+
+  - Installing monolog/monolog (1.22.0)
+    Loading from cache
+
+  - Installing league/csv (8.1.2)
+    Loading from cache
+
+monolog/monolog suggests installing aws/aws-sdk-php (Allow sending log messages to AWS services like DynamoDB)
+monolog/monolog suggests installing doctrine/couchdb (Allow sending log messages to a CouchDB server)
+monolog/monolog suggests installing ext-amqp (Allow sending log messages to an AMQP server (1.0+ required))
+monolog/monolog suggests installing ext-mongo (Allow sending log messages to a MongoDB server)
+monolog/monolog suggests installing graylog2/gelf-php (Allow sending log messages to a GrayLog2 server)
+monolog/monolog suggests installing mongodb/mongodb (Allow sending log messages to a MongoDB server via PHP Driver)
+monolog/monolog suggests installing php-amqplib/php-amqplib (Allow sending log messages to an AMQP server using php-amqplib)
+monolog/monolog suggests installing php-console/php-console (Allow sending log messages to Google Chrome)
+monolog/monolog suggests installing rollbar/rollbar (Allow sending log messages to Rollbar)
+monolog/monolog suggests installing ruflin/elastica (Allow sending log messages to an Elastic Search server)
+monolog/monolog suggests installing sentry/sentry (Allow sending log messages to a Sentry server)
+Writing lock file
+Generating autoload files
+archive: /home/jpmena/RIF/tmp/rifimportations_2016-12-04_08:55:11.zip après ajout de la partie composer/vendor
+```
+ 
