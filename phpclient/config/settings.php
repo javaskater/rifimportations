@@ -14,3 +14,7 @@ $chemins_fichiers = [
     'repertoire_log' => '/home/jpmena/RIF',
 ];
 
+$other_settings = [
+    'log_history_depth' => 2 //nombre de fichiers logs à garder
+];
+

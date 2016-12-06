@@ -2,7 +2,7 @@
 
 namespace Jpmena\Databases\Mysql\Model;
 
-use Jpmena\Databases\Mysql\Helper\LoggerTrait;
+use \Jpmena\Databases\Mysql\Helper\LoggerTrait;
 
 /**
  * Description of Database

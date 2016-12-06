@@ -3,7 +3,7 @@
 require __DIR__ .'/vendor/autoload.php';
 require __DIR__ .'/config/settings.php';
 
-use Jpmena\Databases\Mysql\Controller\RifImporter;
+use \Jpmena\Databases\Mysql\Controller\RifImporter;
 
 /*
  * Le the array of requests to be achieved in the smae transaction!
@@ -28,12 +28,20 @@ $dateLog = new \DateTime();
 
 $log_array = [
     'path' => $chemins_fichiers['repertoire_log']."/adherents_".$dateLog->format('Y-m-d_His').".log",
+    'patterns' => [
+        'glog_pattern' => 'adherents_*\.log',
+        'preg_pattern' => '/adherents_(.*)\.log/',
+        'date_pattern' => 'Y-m-d_His'
+    ],
     'name' => "adherents"
 ];
 
 $adherentsImporter = new RifImporter($log_array['path'], $log_array['name'], $mysql_settings);
 
 $resulat = $adherentsImporter->importerDonneesCsvEtValider($liste_parametres_imports);
+
+$adherentsImporter->logHistoryCleanup($log_array['patterns'], $chemins_fichiers['repertoire_log'],2);
+
 /*
  * Returns true or false pour le CRON OVH
  */

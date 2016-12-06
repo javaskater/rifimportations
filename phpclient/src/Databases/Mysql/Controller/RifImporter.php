@@ -2,8 +2,8 @@
 
 namespace Jpmena\Databases\Mysql\Controller;
 
-use Jpmena\Databases\Mysql\Helper\LoggerTrait;
-use Jpmena\Databases\Mysql\Model\Database;
+use \Jpmena\Databases\Mysql\Helper\LoggerTrait;
+use \Jpmena\Databases\Mysql\Model\Database;
 
 /**
  * Description of RifImporter
