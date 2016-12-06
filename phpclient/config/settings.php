@@ -15,6 +15,6 @@ $chemins_fichiers = [
 ];
 
 $other_settings = [
-    'log_history_depth' => 2 //nombre de fichiers logs à garder
+    'log_history_depth' => 20 //nombre de fichiers logs à garder
 ];
 

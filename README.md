@@ -36,6 +36,15 @@ $chemins_fichiers = [
 ];
 ```
 
+* un autre parapètre intéressants est le nombre de fichiers de logs, d'un même type de traitement (adhérents, animateurs) que l'on souhaite garder
+  * ci dessous on gardera les 20 derniers fichiers de log les plus récents du traitement des adhérents et du traitement des animateurs
+
+``` php
+$other_settings = [
+    'log_history_depth' => 20 //nombre de fichiers logs à garder
+]
+```
+
 ## Programmation des traitements
 
 * programmer via la planificateur OVH l'exécution avec le langage __php 5.6__ des fichiers:

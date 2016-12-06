@@ -44,7 +44,7 @@ $adherentsImporter = new RifImporter($log_array['path'], $log_array['name'], $my
 
 $resulat = $adherentsImporter->importerDonneesCsvEtValider($liste_parametres_imports);
 
-$adherentsImporter->logHistoryCleanup($log_array['patterns'], $chemins_fichiers['repertoire_log'],2);
+$adherentsImporter->logHistoryCleanup($log_array['patterns'], $chemins_fichiers['repertoire_log'],$other_settings['log_history_depth']);
 
 /*
  * Returns true or false pour le CRON OVH
