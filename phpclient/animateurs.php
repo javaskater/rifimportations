@@ -14,17 +14,27 @@ use \Jpmena\Databases\Mysql\Controller\RifImporter;
 $liste_parametres_imports = [
         ['bind_parameters' => [],
         'sql_command_text' => "update users set role = NULL where role = 'animateur'",
-        'log_text' => "Préparation de la table users pour les animteurs avant import csv",
+        'log_text' => "Préparation de la table users pour les animteurs avant recharge csv des animateurs",
+    ],
+    ['bind_parameters' => [':not_to_delete_list' => '999990,196794'],
+        'sql_command_text' => "delete from animateurs where numero not in (:not_to_delete_list)",
+        'log_text' => "purge de la table animateurs actuelle avant reacharge csv des animateurs",
     ],
         [
         'fichier_csv' => $chemins_fichiers['repertoire_csv']."/animateurs.csv",
         'csv_to_bind_parameters' => [':numero' => 0, ':surnom' => 1],
-        'sql_command_text' => "UPDATE animateurs set numero = :numero, surnom = :surnom where numero = :numero", //Ici update et non REPLACE car les autres champs doivent rester les mêmes !!!
-        'log_text' => "Mise à jour d'un animateur"
+        'sql_command_text' => "INSERT INTO animateurs (numero, surnom, tel_domicile, tel_travail,tel_mobile) VALUES (:numero, ':surnom','','','');", //Ici update et non REPLACE car les autres champs doivent rester les mêmes !!!
+        'log_text' => "recharge de la table des animateurs à partir du fichier csv correspondant!"
+    ],
+    [
+        'fichier_csv' => $chemins_fichiers['repertoire_csv']."/adherents.csv",
+        'csv_to_bind_parameters' => [':numero' => 0, ':tel_domicile' => 9, ':tel_travail' => 11, ':tel_mobile' => 10],
+        'sql_command_text' => "UPDATE animateurs set tel_domicile = :tel_domicile, tel_travail = :tel_travail, tel_mobile = :tel_mobile WHERE numero = :numero;", //Ici update et non REPLACE car les autres champs doivent rester les mêmes !!!
+        'log_text' => "Suite à recharge de la table animateurs, mise à jour des numéros de téléphones des animateurs à partir du fichier adherents.csv"
     ],
         ['bind_parameters' => [],
         'sql_command_text' => "update users set role = 'animateur' where `username` in (select numero from animateurs) and (role <> 'admin' OR role is null)",
-        'log_text' => "Mise à jour de la table users pour les animteurs suite à import csv",
+        'log_text' => "Mise à jour de la table users pour les animateurs suite à recharge de la table des animateurs",
     ]
 ];
 
