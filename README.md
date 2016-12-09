@@ -45,15 +45,86 @@ $other_settings = [
 ]
 ```
 
-## Programmation des traitements
-
-* programmer via la planificateur OVH l'exécution avec le langage __php 5.6__ des fichiers:
-  * _rifimportations/phpclient/adherents.php_ pour l'importations et la mise à jour des adhérents
-  * _rifimportations/phpclient/animateurs.php_ pour l'importations et la mise à jour des animateurs
-
 # La Conception
 
-## Composer
+## ce que fait _adherents.php_
+
+* toutes les tâches ci dessous, sont réalisées dans une même [transation PDO](http://php.net/manual/fr/pdo.transactions.php)
+ 
+### il _Recharge de la table des adhérents à partir du fichier csv correspondant_
+
+* chargement de la table __adherents__ à partir du fichier _adherents.csv_ et de la commande Mysql REPLACE expliquée quelques chapitres plus bas
+  * à caque ligne csv la commande mysql passée est:
+``` sql
+REPLACE adherents set numero = :numero, codepostal = :codepostal, expiration = :expiration
+```
+
+### il _purge de la table des adherents pour les adhérents dont la date d'expiration est passée depuis plus 120 jours_
+
+* 120 est un paramètre modifiable posé au début du script _adherents.php_
+* pour cela il passe la requête sql suivante:
+``` sql
+delete from adherents where expiration < (TODAY - 120)
+```
+
+### Il met _à jour de la table users suite à la recharge des adhérents_
+
+* c'est une commande sql reprise telle qu'elle du script python correspondant :
+``` sql
+update users, adherents set users.expiration = adherents.expiration where users.username = adherents.numero
+```
+
+### il _purge de la table des adherents pour les adhérents dont la date d'expiration est passée depuis plus 120 jours_
+
+* 120 est un paramètre modifiable posé au début du script _adherents.php_
+* pour cela il passe la requête sql suivante:
+``` sql
+delete from users where expiration < (TODAY - 120)
+```
+
+## ce que fait _animateurs.php_ :
+
+* toutes les tâches ci dessous, sont réalisées dans une même [transation PDO](http://php.net/manual/fr/pdo.transactions.php)
+
+### Il prépare _la table users pour les animteurs avant recharge csv des animateurs_
+
+* c'est une commande sql reprise telle qu'elle du script python correspondant :
+``` sql
+update users set role = NULL where role = 'animateur'
+```
+ 
+### il _recharge de la table des animateurs à partir du fichier csv correspondant!_
+
+* chargement de la table __animateurs__ à partir du fichier _animateurs.csv_ et de la commande Mysql REPLACE expliquée quelques chapitres plus bas
+  * à caque ligne csv la commande mysql passée est:
+    * on note que l'on remet ici à vide les numéros de téléphone de l'animateur
+``` sql
+REPLACE animateurs SET numero = :numero, surnom = :surnom, Tel_domicile = '', Tel_travail = '', Tel_mobile = ''
+```
+
+### il _met à jour les numéros de téléphone des animateurs (dans la table des animateurs) à partir du fichier adherents.csv_
+
+* Mise à jour de la table __animateurs__ à partir du fichier _adherents.csv_ 
+  * à caque ligne csv la commande mysql passée est:
+``` sql
+UPDATE animateurs set tel_domicile = :tel_domicile, tel_travail = :tel_travail, tel_mobile = :tel_mobile WHERE numero = :numero;
+```
+
+### il _Mise à jour de la table des animateurs à partir des adhérents actuels à savoir ceux non expirés - le script adherents.php a été exécuté auparavant-_
+
+* pour cela il passe la requête sql suivante:
+``` sql
+delete from animateurs where numero not in (select numero from adherents)
+```
+
+### il met _à jour de la table users pour les animateurs suite à recharge de la table des animateurs
+
+* c'est une commande sql reprise telle qu'elle du script python correspondant :
+``` sql
+update users set role = 'animateur' where `username` in (select numero from animateurs) and (role <> 'admin' OR role is null)
+```
+
+## Usage de Composer et des NameSpace du PHP objet
 
 * A l'origine j'ai déclaré que tout namespace commençant par _Jpmena_
   * a ses source sous le répertoire 'src'
@@ -109,6 +180,9 @@ jpmena@jpmena-P34 ~/RIF/rifimportations/phpclient (master *=) $ cat composer.jso
 
 * est remplacé par une suite de commande REPLACE / MYSQL
   * cf. [lien officiel Mysql 5.5](https://dev.mysql.com/doc/refman/5.5/en/replace.html)
+  * cette commannde fait :
+    * un _INSERT_ si la clé primaire n'existe pas
+    * un _UPDATE_ si la clé primaire existe déjà... 
 
 ## Ajout de monolog pour loguer:
 
@@ -157,111 +231,13 @@ jpmena@jpmena-P34 ~/RIF/rifimportations/phpclient (master *=) $ cat composer.jso
 ```
  
 
-# Il reste
+# Programmation des traitements
 
-## au 3/12/2016
+* programmer via la planificateur OVH l'exécution avec le langage __php 5.6__ des fichiers:
+  * _rifimportations/phpclient/adherents.php_ pour l'importations et la mise à jour des adhérents
+  * _rifimportations/phpclient/animateurs.php_ pour l'importations et la mise à jour des animateurs
 
-* __adherents.php__ et __animateurs.php__ OK !!!
-
-### Log OK mais peut être mieux exploitée
-
-* Mais apparemment on peut l'enrichir voir [le site du créateur de Monolog](https://github.com/Seldaek/monolog)
-** pourquoi les _[][]_ ???
-* faut il envoyer la log par mail ? (cas notamment de result KO)
-
-``` bash
-[2016-12-03 08:57:15] adherents.DEBUG: executing mysql request:Importation / mise à jour d'un adherent [] []
-[2016-12-03 08:57:15] adherents.DEBUG: executing mysql request:Mise à jour de la table users [] []
-[2016-12-03 08:57:15] adherents.DEBUG: Ending transaction with success [] []
-```
-
-### sortir certains paramètres dans un fichier _setting.php_
-
-* Je pense à ce qui est commun à tous les _imports/nettoyages_, notamment
-  * les coordonnées d'acccès à la BDD
-  * le répertoire d'accueil des logs !!!
-
-## au 4/12/2016
-
-* la configuration a été exportée ....
-
-### Log OK mais peut être mieux exploitée
-
-* Mais apparemment on peut l'enrichir voir [le site du créateur de Monolog](https://github.com/Seldaek/monolog)
-  * pourquoi les _[][]_ ??? (cf. ci dessus)
-* faut il envoyer la log par mail ? (cas notamment de result KO)
-  * et supprimer ensuite le fichier ?
-
-### Faire tester par CRON 
-
-* le script de livraison _rifimportations/scripts/gitarchive.sh_ fonctionne enfin
-  * il exporte la partie git
-  * et il relance composer pour reconstruire la parrtie vendor non exxportée sous github !!!
-  * il fait un zip de l'ensemble
-
-``` bash
-jpmena@jpmena-P34 ~/RIF/rifimportations/scripts (master *=) $ ./gitarchive.sh 
-archive git: /home/jpmena/RIF/tmp/rifimportations_2016-12-04_08:55:11.zip générée pour la branche: master; contenu:
-Archive:  /home/jpmena/RIF/tmp/rifimportations_2016-12-04_08:55:11.zip
-136b97790497fbecf26be729e9a275fa4d644ed1
-  Length      Date    Time    Name
----------  ---------- -----   ----
-        0  2016-12-04 08:39   rifimportations/
-       28  2016-12-04 08:39   rifimportations/.gitignore
-     4767  2016-12-04 08:39   rifimportations/README.md
-        0  2016-12-04 08:39   rifimportations/phpclient/
-     1510  2016-12-04 08:39   rifimportations/phpclient/adherents.php
-     1780  2016-12-04 08:39   rifimportations/phpclient/animateurs.php
-      177  2016-12-04 08:39   rifimportations/phpclient/composer.json
-        0  2016-12-04 08:39   rifimportations/phpclient/config/
-      560  2016-12-04 08:39   rifimportations/phpclient/config/settings.php
-      683  2016-12-04 08:39   rifimportations/phpclient/randonnee.php
-        0  2016-12-04 08:39   rifimportations/phpclient/src/
-        0  2016-12-04 08:39   rifimportations/phpclient/src/Databases/
-        0  2016-12-04 08:39   rifimportations/phpclient/src/Databases/Mysql/
-        0  2016-12-04 08:39   rifimportations/phpclient/src/Databases/Mysql/Controller/
-     2713  2016-12-04 08:39   rifimportations/phpclient/src/Databases/Mysql/Controller/RifImporter.php
-        0  2016-12-04 08:39   rifimportations/phpclient/src/Databases/Mysql/Helper/
-     1224  2016-12-04 08:39   rifimportations/phpclient/src/Databases/Mysql/Helper/LoggerTrait.php
-        0  2016-12-04 08:39   rifimportations/phpclient/src/Databases/Mysql/Model/
-     5998  2016-12-04 08:39   rifimportations/phpclient/src/Databases/Mysql/Model/Database.php
-        0  2016-12-04 08:39   rifimportations/phpclient/vendor/
-      178  2016-12-04 08:39   rifimportations/phpclient/vendor/autoload.php
-        0  2016-12-04 08:39   rifimportations/scripts/
-      945  2016-12-04 08:39   rifimportations/scripts/gitarchive.sh
----------                     -------
-    20563                     23 files
-il nous faut ajouter la partie vendor ..
-ajout de la partie vendor via composer
-You are running composer with xdebug enabled. This has a major impact on runtime performance. See https://getcomposer.org/xdebug
-Loading composer repositories with package information
-Updating dependencies (including require-dev)
-  - Installing psr/log (1.0.2)
-    Loading from cache
-
-  - Installing monolog/monolog (1.22.0)
-    Loading from cache
-
-  - Installing league/csv (8.1.2)
-    Loading from cache
-
-monolog/monolog suggests installing aws/aws-sdk-php (Allow sending log messages to AWS services like DynamoDB)
-monolog/monolog suggests installing doctrine/couchdb (Allow sending log messages to a CouchDB server)
-monolog/monolog suggests installing ext-amqp (Allow sending log messages to an AMQP server (1.0+ required))
-monolog/monolog suggests installing ext-mongo (Allow sending log messages to a MongoDB server)
-monolog/monolog suggests installing graylog2/gelf-php (Allow sending log messages to a GrayLog2 server)
-monolog/monolog suggests installing mongodb/mongodb (Allow sending log messages to a MongoDB server via PHP Driver)
-monolog/monolog suggests installing php-amqplib/php-amqplib (Allow sending log messages to an AMQP server using php-amqplib)
-monolog/monolog suggests installing php-console/php-console (Allow sending log messages to Google Chrome)
-monolog/monolog suggests installing rollbar/rollbar (Allow sending log messages to Rollbar)
-monolog/monolog suggests installing ruflin/elastica (Allow sending log messages to an Elastic Search server)
-monolog/monolog suggests installing sentry/sentry (Allow sending log messages to a Sentry server)
-Writing lock file
-Generating autoload files
-archive: /home/jpmena/RIF/tmp/rifimportations_2016-12-04_08:55:11.zip après ajout de la partie composer/vendor
-```
-
-### Le CRON sur machine virtuelle Debian / PHP 5.6 (VirtualBox)
+## Le CRON sur machine virtuelle Debian / PHP 5.6 (VirtualBox)
 
 * Finalement le test est > 0 à
 
@@ -310,7 +286,7 @@ jpmena@rifovh:~$ tail -5 RIF/animateurs_2016-12-04_10\:45\:01.log
 [2016-12-04 10:45:01] animateurs.DEBUG: Ending transaction with success [] []
 ```
 
-### Le cron sur l'hébergement mutualisé 1AND1
+## Le cron sur l'hébergement mutualisé 1AND1
 
 * Attention à bien utiliser la version _cliente_ et non _cgi_ de __php 5.5__
 

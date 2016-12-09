@@ -19,7 +19,7 @@ $liste_parametres_imports = [
         [
         'fichier_csv' => $chemins_fichiers['repertoire_csv'] . "/animateurs.csv",
         'csv_to_bind_parameters' => [':numero' => 0, ':surnom' => 1],
-        'sql_command_text' => "UPDATE animateurs set numero = :numero, surnom = :surnom where numero = :numero", //Ici update et non REPLACE car les autres champs doivent rester les mêmes !!!
+        'sql_command_text' => "REPLACE animateurs SET numero = :numero, surnom = :surnom, Tel_domicile = '', Tel_travail = '', Tel_mobile = ''",
         'log_text' => "recharge de la table des animateurs à partir du fichier csv correspondant!"
     ],
      [

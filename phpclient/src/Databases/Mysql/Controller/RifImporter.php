@@ -46,7 +46,7 @@ class RifImporter {
                         }
                         //print_r($bindParameters);
                         $sqlCommmandText = $parametres_imports['sql_command_text'];
-                        $log_text = $parametres_imports['log_text'];
+                        $log_text = "++csv:".$parametres_imports['log_text'];
                         $this->myDatabaseModel->prepareRequetePourTransaction($sqlCommmandText, $bindParameters, $log_text);
                     } else {
                         $firstline = FALSE;
