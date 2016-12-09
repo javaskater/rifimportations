@@ -309,7 +309,41 @@ jpmena@rifovh:~$ tail -5 RIF/animateurs_2016-12-04_10\:45\:01.log
 [2016-12-04 10:45:01] animateurs.DEBUG: executing mysql request:Mise à jour de la table users pour les animteurs suite à import csv [] []
 [2016-12-04 10:45:01] animateurs.DEBUG: Ending transaction with success [] []
 ```
-## TODO
 
-* mettre en place un mode d'emploi sur cette documentation
+### Le cron sur l'hébergement mutualisé 1AND1
+
+* Attention à bien utiliser la version _cliente_ et non _cgi_ de __php 5.5__
+
+``` bash
+#tous les php présents
+(uiserver):u72756193:~/livrables_jpm/rifimportations/phpclient/config$ whereis php
+php: /usr/bin/php /usr/bin/php4.4 /usr/bin/php5.2 /usr/bin/php5.4 /usr/bin/php5.5 
+/usr/bin/php5.2-cli /usr/bin/php5.4-cli /usr/bin/php5.5-cli /usr/bin/php4.4-cli /usr/lib/php5.5 
+/usr/lib/php5.4 /usr/lib/php4.4 /usr/lib/php5.2 /usr/local/bin/php /usr/local/bin/php4.4 /usr/local/bin/php5.2 
+/usr/local/bin/php5.4 /usr/local/bin/php5.5 /usr/include/php5.5 /usr/include/php5.2 /usr/include/php5.4 /usr/include/php4.4 /usr/share/php
+#en php 5.5 la version par défaut est la version cgi
+(uiserver):u72756193:~/livrables_jpm/rifimportations/phpclient/config$ /usr/bin/php5.5 --version
+PHP 5.5.38 (cgi-fcgi) (built: Nov 16 2016 08:07:34)
+Copyright (c) 1997-2015 The PHP Group
+Zend Engine v2.5.0, Copyright (c) 1998-2015 Zend Technologies
+#pour nos scripts clients on a besoin de la version cliente
+(uiserver):u72756193:~/livrables_jpm/rifimportations/phpclient/config$ /usr/bin/php5.5-cli --version
+PHP 5.5.38 (cli) (built: Nov 16 2016 08:07:24) 
+Copyright (c) 1997-2015 The PHP Group
+Zend Engine v2.5.0, Copyright (c) 1998-2015 Zend Technologies
+```
+
+
+* Cela donne pour notre _CRONTAB_
+  * le script _adherents.php_ sera exécuté tous les matins à _4.30 a.m._
+  * le script _animateurs.php_ sera exécuté tous les matins à _5.30 a.m._
+
+``` bash
+(uiserver):u72756193:~/livrables_jpm/rifimportations/phpclient/config$ crontab -l | tail -5
+
+#tests rif adherents
+30 04 * * * /usr/bin/php5.5-cli /kunden/homepages/21/d462702613/htdocs/livrables_jpm/rifimportations/phpclient/adherents.php
+#tests rif animateurs
+30 05 * * * /usr/bin/php5.5-cli /kunden/homepages/21/d462702613/htdocs/livrables_jpm/rifimportations/phpclient/animateurs.php
+```
 
