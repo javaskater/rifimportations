@@ -23,7 +23,7 @@ $mysql_settings = [
     'password' => 'rif',
     'charset' => 'utf8'
 ];
-```
+```V
 
 * on édite également le tableau __$chemins_fichiers__  qui recenseles répertoires où vous souhaitez voir apparaître:
   * Le répertoire où se trouveront les Logs relatives aux traitements: cf. clé *repertoire_log* du tableau en question cf.  ci dessous
@@ -323,3 +323,15 @@ Zend Engine v2.5.0, Copyright (c) 1998-2015 Zend Technologies
 30 05 * * * /usr/bin/php5.5-cli /kunden/homepages/21/d462702613/htdocs/livrables_jpm/rifimportations/phpclient/animateurs.php
 ```
 
+# le fonctionnement sur la console donne:
+
+## en allant surr l'hébergement OVH, on obtient:
+
+```
+[2017-08-03 10:53:03] ## OVH ## START - 2017-08-03 10:53:03.708833 executing: /usr/local/php5.6/bin/php /homez.25/rifrando/./rifimportations/phpclient/adherents.php 
+[2017-08-03 10:53:03] 
+[2017-08-03 10:53:03] ## OVH ## END - 2017-08-03 10:53:05.558080 exitcode: 0
+[2017-08-03 11:49:03] ## OVH ## START - 2017-08-03 11:49:03.005186 executing: /usr/local/php5.6/bin/php /homez.25/rifrando/./rifimportations/phpclient/animateurs.php 
+[2017-08-03 11:49:03] 
+[2017-08-03 11:49:03] ## OVH ## END - 2017-08-03 11:49:09.972485 exitcode: 0
+```
