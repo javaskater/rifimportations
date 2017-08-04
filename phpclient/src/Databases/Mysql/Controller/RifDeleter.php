@@ -6,21 +6,16 @@ use \Jpmena\Databases\Mysql\Helper\LoggerTrait;
 use \Jpmena\Databases\Mysql\Model\Database;
 
 /**
- * Description of RifImporter
+ * Description of RifImporterFileSystem
  *
  * @author jpmena
  */
-class RifImporter {
+class RifDeleter {
 
     private $myDatabaseModel;
 
     use LoggerTrait;
 
-    public function __construct($chemin_log, $nom_log, $mysql_settings = NULL) {
-        $this->openLogFile($chemin_log, $nom_log);
-        $this->myDatabaseModel = new Database($mysql_settings);
-        $this->myDatabaseModel->importExistingLogger($this->exportExistingLogger());
-    }
 
     /**
      * Get nids of the nodes to delete.
@@ -31,7 +26,7 @@ class RifImporter {
      * @return array
      *   Array of nids of nodes to delete.
      */
-    public function suppressDonneesCsvEtValider($parametres_suppress_array) {
+    public function deleteAttached($parametres_imports_array) {
         foreach ($parametres_imports_array as $parametres_imports) {
             //var_dump($parametres_imports);
             if (array_key_exists ( 'fichier_csv' , $parametres_imports ) && file_exists($parametres_imports['fichier_csv'])) {
