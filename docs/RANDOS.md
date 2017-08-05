@@ -58,3 +58,25 @@ mysql> desc randonnees;
 +------------------------+--------------+------+-----+---------+----------------+
 34 rows in set (0,01 sec)
 ```
+
+# Avancées
+
+## le 05/08/2017 :
+
+* Malgré les SQL
+
+```sql
+REPLACE randonnees set cle = :cle, date = :date, typeRando = :typeRando, nbParticipants = :nbParticipants, titre = :titre, nomProgramme = :nomProgramme, distanceInferieure = CAST(:distanceInferieure AS DECIMAL(1,0)), distanceCalculee = CAST(:distanceCalculee AS DECIMAL(1,0)), distanceSuperieure = CAST(:distanceSuperieure AS DECIMAL(1,0)), unite =:unite, allure =:allure, 
+heureDepartAller = STR_TO_DATE(:heureDepartAller, '%Y/%m/%d %h:%i:%s'), heureChgtArriveeAller = STR_TO_DATE(:heureChgtArriveeAller, '%Y/%m/%d %h:%i:%s'), heureChgtDepartAller = STR_TO_DATE(:heureChgtDepartAller, '%Y/%m/%d %h:%i:%s'), heureArriveeAller = STR_TO_DATE(:heureArriveeAller, '%Y/%m/%d %h:%i:%s'), heureDepartRetour = STR_TO_DATE(:heureDepartRetour, '%Y/%m/%d %h:%i:%s'), 
+heureChgtArriveeRetour = STR_TO_DATE(:heureChgtArriveeRetour, '%Y/%m/%d %h:%i:%s'), heureChgtDepartRetour = STR_TO_DATE(:heureChgtDepartRetour, '%Y/%m/%d %h:%i:%s'), heureArriveeRetour = STR_TO_DATE(:heureArriveeRetour, '%Y/%m/%d %h:%i:%s'),
+allerGareDepart =:allerGareDepart, allerChangementNb =:allerChangementNb, allerGareArrivee = :allerGareArrivee, itineraire = :itineraire, retourGareDepart = :retourGareDepart,
+retourChangementNb = :retourChangementNb, retourGareArrivee = :retourGareArrivee, multiDates = :multiDates, horairesVerification = :horairesVerification, commentaires = :commentaires, efface = :efface, syncLocal = :syncLocal, syncDistant = :syncDistant
+```
+
+* J'ai encore dans les logs :
+```bash
+jpmena@jpmena-P34:~/RIF$ cat randonnees_2017-08-05_180016.log
+[2017-08-05 18:00:23] randonnees.DEBUG: Starting transaction [] []
+[2017-08-05 18:00:23] randonnees.DEBUG: executing mysql request:++csv:Recharge de la table des randonnées de jour à partir du fichier csv correspondant [] []
+[2017-08-05 18:00:32] randonnees.ERROR: Ending transaction with failure; code: 22007,message: SQLSTATE[22007]: Invalid datetime format: 1292 Truncated incorrect DECIMAL value: '' [] []
+```
