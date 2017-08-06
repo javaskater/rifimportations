@@ -18,13 +18,13 @@ $liste_parametres_imports = [
     ],
         [
         'fichier_csv' => $chemins_fichiers['repertoire_csv'] . "/animateurs.csv",
-        'csv_to_bind_parameters' => [':numero' => 0, ':surnom' => 1],
+        'csv_to_bind_parameters' => [':numero' => [0], ':surnom' => [1]],
         'sql_command_text' => "REPLACE animateurs SET numero = :numero, surnom = :surnom, Tel_domicile = '', Tel_travail = '', Tel_mobile = ''",
         'log_text' => "recharge de la table des animateurs à partir du fichier csv correspondant!"
     ],
      [
         'fichier_csv' => $chemins_fichiers['repertoire_csv'] . "/adherents.csv",
-        'csv_to_bind_parameters' => [':numero' => 0, ':tel_domicile' => 9, ':tel_travail' => 11, ':tel_mobile' => 10],
+        'csv_to_bind_parameters' => [':numero' => [0], ':tel_domicile' => [9], ':tel_travail' => [11], ':tel_mobile' => [10]],
         'sql_command_text' => "UPDATE animateurs set tel_domicile = :tel_domicile, tel_travail = :tel_travail, tel_mobile = :tel_mobile WHERE numero = :numero;", //Ici update et non REPLACE car les autres champs doivent rester les mêmes !!!
         'log_text' => "Suite à recharge de la table animateurs, mise à jour des numéros de téléphones des animateurs à partir du fichier adherents.csv"
     ],
