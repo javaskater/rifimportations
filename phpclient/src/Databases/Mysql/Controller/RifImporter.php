@@ -3,6 +3,7 @@
 namespace Jpmena\Databases\Mysql\Controller;
 
 use \Jpmena\Databases\Mysql\Helper\LoggerTrait;
+use \Jpmena\Databases\Mysql\Helper\ConverterTrait;
 use \Jpmena\Databases\Mysql\Model\Database;
 
 /**
@@ -15,7 +16,7 @@ class RifImporter {
     private $myDatabaseModel;
     
     use LoggerTrait;
-    //TODO Create a converter trait
+    use ConverterTrait;
 
     public function __construct($chemin_log, $nom_log, $mysql_settings = NULL) {
         $this->openLogFile($chemin_log, $nom_log);
@@ -45,7 +46,7 @@ class RifImporter {
                         foreach ($bindkeys_csvpos as $bindkey => $arr_value) {
                             $pdo_format="string";
                             $csvpos = $arr_value[0];
-                            if (coun($arr_value) > 1){
+                            if (count($arr_value) > 1){
                                 $pdo_format=$arr_value[1];
                             }
                             $bindParameters[$bindkey] =  $this->pdo_convert($csvRow[$csvpos], $pdo_format);
@@ -70,23 +71,6 @@ class RifImporter {
             'parametres_imports_array' => $parametres_imports_array,
             'resultat_transaction' => $resultat_transaction_array
         ];
-    }
-
-    private function pdo_convert($row_value, $pdo_format){
-        $pdo_value=$row_value;
-        switch ($pdo_format):
-            case "datetime": //see: http://php.net/manual/fr/class.datetime.php
-                $pdo_value = \DateTime::createFromFormat ( '%Y/%m/%d %h:%i:%s' , $row_value); //do I need the TimeZone ?
-                echo "i égal 0";
-                break;
-            case "date":
-                $pdo_value = \DateTime::createFromFormat ( '%Y-%m-%d' , $row_value); //do I need the TimeZone ?
-                break;
-             case "float":
-                $pdo_value = floatval($row_value);
-                break;
-        endswitch;
-        return $pdo_value;
     }
 
 }

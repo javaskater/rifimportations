@@ -80,3 +80,16 @@ jpmena@jpmena-P34:~/RIF$ cat randonnees_2017-08-05_180016.log
 [2017-08-05 18:00:23] randonnees.DEBUG: executing mysql request:++csv:Recharge de la table des randonnées de jour à partir du fichier csv correspondant [] []
 [2017-08-05 18:00:32] randonnees.ERROR: Ending transaction with failure; code: 22007,message: SQLSTATE[22007]: Invalid datetime format: 1292 Truncated incorrect DECIMAL value: '' [] []
 ```
+
+### Ce qui paraît curieux:
+
+* Etre obligé de mettre au format string dans le PDO
+  * ligne 
+
+
+```bash
+jpmena@jpmena-P34:~/RIF$ cat randonnees_2017-08-05_180016.log
+[2017-08-05 18:00:23] randonnees.DEBUG: Starting transaction [] []
+[2017-08-05 18:00:23] randonnees.DEBUG: executing mysql request:++csv:Recharge de la table des randonnées de jour à partir du fichier csv correspondant [] []
+[2017-08-05 18:00:32] randonnees.ERROR: Ending transaction with failure; code: 22007,message: SQLSTATE[22007]: Invalid datetime format: 1292 Truncated incorrect DECIMAL value: '' [] []
+```
