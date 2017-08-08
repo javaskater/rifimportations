@@ -1,8 +1,8 @@
 <?php
 
-namespace Jpmena\Databases\Mysql\Model;
+namespace Jpmena\RIF\Model;
 
-use \Jpmena\Databases\Mysql\Helper\LoggerTrait;
+use \Jpmena\RIF\Helper\LoggerTrait;
 
 /**
  * Description of Database

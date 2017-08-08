@@ -1,6 +1,6 @@
 <?php
 
-namespace Jpmena\Databases\Mysql\Helper;
+namespace Jpmena\RIF\Helper;
 
 use \Monolog\Logger;
 use \Monolog\Handler\StreamHandler;

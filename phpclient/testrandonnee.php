@@ -1,7 +1,7 @@
 <?php
 require 'vendor/autoload.php';
 
-use Jpmena\Databases\Mysql\Model\Database;
+use Jpmena\RIF\Model\Database;
 
 $texte_requete_sql = 'SELECT cle, date, titre, itineraire FROM randonnees WHERE typeRando = :type order by :order :updown';
 $parametres_a_lier = array(

@@ -1,10 +1,10 @@
 <?php
 
-namespace Jpmena\Databases\Mysql\Controller;
+namespace Jpmena\RIF\Controller;
 
-use \Jpmena\Databases\Mysql\Helper\LoggerTrait;
-use \Jpmena\Databases\Mysql\Helper\ConverterTrait;
-use \Jpmena\Databases\Mysql\Model\Database;
+use \Jpmena\RIF\Helper\LoggerTrait;
+use \Jpmena\RIF\Helper\ConverterTrait;
+use \Jpmena\RIF\Model\Database;
 
 /**
  * Description of RifImporter

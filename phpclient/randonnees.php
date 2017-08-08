@@ -3,8 +3,8 @@
 require __DIR__ . '/vendor/autoload.php';
 require __DIR__ . '/config/settings.php';
 
-use \Jpmena\Databases\Mysql\Controller\RifImporter;
-use \Jpmena\Databases\Mysql\Controller\RifDeleter;
+use \Jpmena\RIF\Controller\RifImporter;
+use \Jpmena\RIF\Controller\RifDeleter;
 
 /*
 * reprendre les scripts mois par et mois impair à placer dans RifDeleter...

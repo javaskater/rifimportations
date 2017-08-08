@@ -3,7 +3,7 @@
 require __DIR__ . '/vendor/autoload.php';
 require __DIR__ . '/config/settings.php';
 
-use \Jpmena\Databases\Mysql\Controller\RifImporter;
+use \Jpmena\RIF\Controller\RifImporter;
 
 $expiration_jours = 120;
 $now = new \DateTime();
@@ -20,7 +20,7 @@ $expiration_delay = $now->sub(new \DateInterval("P" . $expiration_jours . "D"))-
 $liste_parametres_imports = [
         [
         'fichier_csv' => $chemins_fichiers['repertoire_csv'] . "/adherents.csv",
-        'csv_to_bind_parameters' => [':numero' => [0], ':codepostal' => [6], ':expiration' => [17],
+        'csv_to_bind_parameters' => [':numero' => [0], ':codepostal' => [6], ':expiration' => [17]],
         'sql_command_text' => "REPLACE adherents set numero = :numero, codepostal = :codepostal, expiration = :expiration", //Pas de problème avec la date AAAA-MM-JJ ?
         'log_text' => "Recharge de la table des adhérents à partir du fichier csv correspondant"
     ],

@@ -3,7 +3,7 @@
 require __DIR__ . '/vendor/autoload.php';
 require __DIR__ . '/config/settings.php';
 
-use \Jpmena\Databases\Mysql\Controller\RifImporter;
+use \Jpmena\RIF\Controller\RifImporter;
 
 /*
  * Le the array of requests to be achieved in the smae transaction!
