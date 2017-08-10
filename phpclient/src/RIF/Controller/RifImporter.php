@@ -2,8 +2,8 @@
 
 namespace Jpmena\RIF\Controller;
 
+use \Jpmena\RIF\Helper\RequesterTrait;
 use \Jpmena\RIF\Helper\LoggerTrait;
-use \Jpmena\RIF\Helper\ConverterTrait;
 use \Jpmena\RIF\Model\Database;
 
 /**
@@ -12,61 +12,28 @@ use \Jpmena\RIF\Model\Database;
  * @author jpmena
  */
 class RifImporter {
-
-    private $myDatabaseModel;
     
+    use RequesterTrait;
     use LoggerTrait;
-    use ConverterTrait;
 
     public function __construct($chemin_log, $nom_log, $mysql_settings = NULL) {
         $this->openLogFile($chemin_log, $nom_log);
-        $this->myDatabaseModel = new Database($mysql_settings);
-        $this->myDatabaseModel->importExistingLogger($this->exportExistingLogger());
+        $this->my_database_model = new Database($mysql_settings);
+        $this->my_database_model->importExistingLogger($this->exportExistingLogger());
     }
 
     /**
-     * Get nids of the nodes to delete.
+     * Execute the import transaction out of datas of many csv file.
      *
-     * @param array $roles
-     *   Array of roles.
+     * @param array of associative arrays.
+     * Each associative array defines an array of requests to compose from a csv file
      *
      * @return array
-     *   Array of nids of nodes to delete.
+     *   the gobal result of the transaction !!!
      */
-    public function importerDonneesCsvEtValider($parametres_imports_array) {
-        foreach ($parametres_imports_array as $parametres_imports) {
-            //var_dump($parametres_imports);
-            if (array_key_exists ( 'fichier_csv' , $parametres_imports ) && file_exists($parametres_imports['fichier_csv'])) {
-                $csv = \League\Csv\Reader::createFromPath($parametres_imports['fichier_csv']);
-                $firstline = TRUE;
-                foreach ($csv as $csvRow) {
-                    if (!$firstline) { //La première ligne est celle des titres
-                        $bindkeys_csvpos = $parametres_imports['csv_to_bind_parameters'];
-                        $bindParameters = [];
-                        foreach ($bindkeys_csvpos as $bindkey => $arr_value) {
-                            $pdo_format="string";
-                            $csvpos = $arr_value[0];
-                            if (count($arr_value) > 1){
-                                $pdo_format=$arr_value[1];
-                            }
-                            $bindParameters[$bindkey] =  $this->pdo_convert($csvRow[$csvpos], $pdo_format);
-                        }
-                        //print_r($bindParameters);
-                        $sqlCommmandText = $parametres_imports['sql_command_text'];
-                        $log_text = "++csv:".$parametres_imports['log_text'];
-                        $this->myDatabaseModel->prepareRequetePourTransaction($sqlCommmandText, $bindParameters, $log_text);
-                    } else {
-                        $firstline = FALSE;
-                    }
-                }
-            } else {
-                $bindParameters = $parametres_imports['bind_parameters'];
-                $sqlCommmandText = $parametres_imports['sql_command_text'];
-                $log_text = $parametres_imports['log_text'];
-                $this->myDatabaseModel->prepareRequetePourTransaction($sqlCommmandText, $bindParameters, $log_text);
-            }
-        }
-        $resultat_transaction_array = $this->myDatabaseModel->executeTransaction();
+    public function importDataFromCsvAndValidate($parametres_imports_array) {
+        $this->prepareRequestFromCsvFiles($parametres_imports_array);
+        $resultat_transaction_array = $this->my_database_model->executeTransaction();
         return [
             'parametres_imports_array' => $parametres_imports_array,
             'resultat_transaction' => $resultat_transaction_array

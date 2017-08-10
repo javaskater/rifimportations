@@ -113,6 +113,29 @@ class Database {
         return array('res_t'=> $resultTransaction,'reqs_t' => $requetesExecutees);
     }
 
+
+    /**
+     * Fetchs and aggregate the results from all the requests
+     */
+    public function fetchAllAndAggregate($index_col_to_fetch) {
+        $global_result_from_fetch = [];
+        $fetchRequestsExecuted = [];
+        if (count($this->stmt_queries) > 0) {
+            $this->debug("Starting transaction");
+            $i=1;
+            foreach ($this->stmt_queries as $fetch_request) {
+                $this->debug("executing mysql request:".$fetch_request['log_text']);
+                // see http://php.net/manual/fr/pdostatement.fetchall.php
+                $local_result_from_fetch = $fetch_request['prepared_statement']->fetchAll(\PDO::FETCH_COLUMN, $index_col_to_fetch);
+                if ($local_result_from_fetch) {
+                    $global_result_from_fetch = array_merge(global_result_from_fetch, $local_result_from_fetch);
+                    $fetchRequestsExecuted[] = $fetch_request;
+                    $i++;
+                } 
+            }
+        }
+        return array('res_f'=> $global_result_from_fetch,'reqs_t' => $fetchRequestsExecuted);
+    }
     
     /**
      *

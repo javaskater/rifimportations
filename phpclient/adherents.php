@@ -52,7 +52,7 @@ $log_array = [
 
 $adherentsImporter = new RifImporter($log_array['path'], $log_array['name'], $mysql_settings);
 
-$resulat = $adherentsImporter->importerDonneesCsvEtValider($liste_parametres_imports);
+$resulat = $adherentsImporter->importDataFromCsvAndValidate($liste_parametres_imports);
 
 $adherentsImporter->logHistoryCleanup($log_array['patterns'], $chemins_fichiers['repertoire_log'], $other_settings['log_history_depth']);
 

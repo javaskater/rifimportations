@@ -303,3 +303,7 @@ Zend Engine v2.5.0, Copyright (c) 1998-2015 Zend Technologies
 [2017-08-03 11:49:03]
 [2017-08-03 11:49:03] ## OVH ## END - 2017-08-03 11:49:09.972485 exitcode: 0
 ```
+
+# TODO
+
+* Vérifier si le résultat est parlant ... pour le CRON le retravailler si nécéssaire

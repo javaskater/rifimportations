@@ -1,7 +1,8 @@
 <?php
 
-namespace Jpmena\RIF\Mysql\Controller;
+namespace Jpmena\RIF\Controller;
 
+use \Jpmena\RIF\Helper\RequesterTrait;
 use \Jpmena\RIF\Helper\LoggerTrait;
 use \Jpmena\RIF\Model\Database;
 
@@ -12,224 +13,50 @@ use \Jpmena\RIF\Model\Database;
  */
 class RifDeleter {
 
-    private $myDatabaseModel;
-
+    use RequesterTrait;
     use LoggerTrait;
+    
 
-
+    public function __construct($chemin_log, $nom_log, $mysql_settings = NULL) {
+        $this->openLogFile($chemin_log, $nom_log);
+        $this->my_database_model = new Database($mysql_settings);
+        $this->my_database_model->importExistingLogger($this->exportExistingLogger());
+    }
+    
     /**
-     * Get nids of the nodes to delete.
+     * Execute the import transaction out of datas of many csv file.
      *
-     * @param array $roles
-     *   Array of roles.
+     * @param array of associative arrays.
+     * Each associative array defines an array of requests to compose from a csv file
      *
      * @return array
-     *   Array of nids of nodes to delete.
+     *   the gobal result of the transaction !!!
      */
-    public function deleteAttached($parametres_imports_array) {
-        foreach ($parametres_imports_array as $parametres_imports) {
-            //var_dump($parametres_imports);
-            if (array_key_exists ( 'fichier_csv' , $parametres_imports ) && file_exists($parametres_imports['fichier_csv'])) {
-                $csv = \League\Csv\Reader::createFromPath($parametres_imports['fichier_csv']);
-                $firstline = TRUE;
-                foreach ($csv as $csvRow) {
-                    if (!$firstline) { //La première ligne est celle des titres
-                        $bindkeys_csvpos = $parametres_imports['csv_to_bind_parameters'];
-                        $bindParameters = [];
-                        foreach ($bindkeys_csvpos as $bindkey => $csvpos) {
-                            $bindParameters[$bindkey] =  $csvRow[$csvpos];
-                        }
-                        //print_r($bindParameters);
-                        $sqlCommmandText = $parametres_imports['sql_command_text'];
-                        $log_text = "++csv:".$parametres_imports['log_text'];
-                        $this->myDatabaseModel->prepareRequetePourTransaction($sqlCommmandText, $bindParameters, $log_text);
-                    } else {
-                        $firstline = FALSE;
-                    }
-                }
-            } else {
-                $bindParameters = $parametres_imports['bind_parameters'];
-                $sqlCommmandText = $parametres_imports['sql_command_text'];
-                $log_text = $parametres_imports['log_text'];
-                $this->myDatabaseModel->prepareRequetePourTransaction($sqlCommmandText, $bindParameters, $log_text);
-            }
-        }
-        $resultat_transaction_array = $this->myDatabaseModel->executeTransaction();
+    public function deleteFromCsvAndValidate($parameters_deletes_array) {
+        $this->prepareRequestFromCsvFiles($parameters_deletes_array);
+        $resultat_transaction_array = $this->my_database_model->executeTransaction();
         return [
-            'parametres_imports_array' => $parametres_imports_array,
+            'parametres_imports_array' => $parameters_deletes_array,
             'resultat_transaction' => $resultat_transaction_array
         ];
     }
 
-/*    def nettoieRandonnees(path_a_effacer):
-	nomColCle="Rj_CleJour"
-	repertoireUpload=os.path.join(os.path.dirname(__file__),"../extranet/app/webroot/upload/randonnees")
-	indiceCle=-1
-	f_to_del=open(os.path.abspath(os.path.join(os.path.dirname(__file__),path_a_effacer)),'r')
-	to_del_csv=csv.reader(f_to_del)
-	entete=None
-	for ligne_a_effacer in to_del_csv:
-		if entete is None:
-			entete=ligne_a_effacer
-			colnum=0
-			for col in entete:
-				if col==nomColCle:
-					indiceCle=colnum
-					break
-				colnum += 1
-		elif indiceCle >= 0 and len(ligne_a_effacer) > indiceCle:œ
-			requete="delete from commentaires where randonnee_cle=%s" %(rando_cle)
-			executesql(requete)
-			#finalement suppression de la randonnee elle meme
-			requete="delete from randonnees where cle=%s" %(rando_cle)
-			executesql(requete)
-		
-def nettoieCollectives(path_a_effacer):
-	nomColCle="Co_CleCol"
-	indiceCle=-1
-	repertoireUpload=os.path.join(os.path.dirname(__file__),"../extranet/app/webroot/upload/collectives")
-	f_to_del=open(os.path.abspath(os.path.join(os.path.dirname(__file__),path_a_effacer)),'r')
-	to_del_csv=csv.reader(f_to_del)
-	entete=None
-	for ligne_a_effacer in to_del_csv:
-		if entete is None:
-			entete=ligne_a_effacer
-			colnum=0
-			for col in entete:
-				if col==nomColCle:
-					indiceCle=colnum
-					break
-				colnum += 1
-		elif indiceCle >= 0 and len(ligne_a_effacer) > indiceCle:
-			cle_coll=ligne_a_effacer[indiceCle]
-			requete="select id,fichier from fichiers where collective_cle=%s" %(cle_coll)
-			fichiersASupprimer=executesql(requete)
-			if fichiersASupprimer is not None:
-				for fichier in fichiersASupprimer:
-			        #detruit fichier sur le disque dur
-					path_to_del=os.path.join(repertoireUpload,fichier[1])
-					if os.path.exists(path_to_del):
-						print "suppression du fichier %s" %(path_to_del)
-						os.unlink(path_to_del)
-			        #detruit l'enregitrement du fichier dans la base
-					requete="delete from fichiers where id=%s" %(fichier[0])
-					executesql(requete)
-			#suppression des commentaires correspondant a la randonnee
-			requete="delete from commentaires where collective_cle=%s" %(cle_coll)
-			executesql(requete)
-			#finalement suppression de la randonnee elle meme
-			requete="delete from collectives where Co_CleCol=%s" %(cle_coll)
-			executesql(requete)
 
-            def moispair():
-    mois=date.today().month
-    if mois%2==0:
-		print 'mois pair'
-		return 1
-    else:
-		print 'mois impair'
-		return 0
-if moispair(): 
-	def datelimite():
-		aujourdhui=date.today()
-		premier=aujourdhui.replace(day=1)
-		return premier.isoformat()
-else :
-	def datelimite():
-		aujourdhui=date.today()
-		premier=aujourdhui.replace(day=1)
-		premier=premier.replace(month=date.today().month - 1)
-		return premier.isoformat()
+    /**
+     * Get keys and attached files of hikes to delete
+     *
+     * @param parametres_imports: associative array with 3 keys:
+     *       'fichier_csv' : the CSV File I get the datas from for my prepared SQL Request
+     *       'csv_to_bind_parameters' : the associative array between prepared request parameters and value's index in the csv file
+     *       'sql_command_text' : the prepared request (string)
+     *
+     * @return array
+     *   Array of abspath of files to delete with the corresponding mysql's hike's key.
+    */
+    public function findPathsToDeleteFromCsv($parametres_imports){
+        $this->prepareRequestFromCsvFile($parametres_imports);
+        $resultat_transaction_array = $this->my_database_model->fetchAllAndAggregate(0);
+        return $resultat_transaction_array;
+    }
 
-		
-
-repertoireUpload="/homez.25/rifrando/extranet/app/webroot/upload/collectives"
-
-requete= "select Co_CleCol from collectives where Co_DateDepart < '"+datelimite()+"'"
-collectivesanciennes=sql.executesqlselect(requete)
-if len(collectivesanciennes) > 0:
-    for id_collective in collectivesanciennes:
-        id_str=str(id_collective[0])
-        for f in os.listdir(repertoireUpload):
-            #detruit fichier sur le disque dur
-            path=repertoireUpload+"/"+f
-            if (f.startswith(id_str) and os.path.exists(path)):
-                try:
-                    os.unlink(path)
-                except OSError as e:
-                    print u'impossible de supprimer %s cause:%d-%s' %(e.filename,e.errno,e.strerror)
-        #detruit l'enregitrement du fichier dans la base
-        requete="select id,fichier from fichiers where collective_cle="+str(id_collective[0])
-        fichiersASupprimer=sql.executesqlselect(requete)
-        for fichier in fichiersASupprimer:
-            requete="delete from fichiers where id="+str(fichier[0])
-            sql.executesql(requete)
-        #suppression des commentaires correspondant a la collective
-        requete="delete from commentaires where collective_cle="+str(id_collective[0])
-        sql.executesql(requete)
-        #finalement suppression de la collective elle meme
-        requete="delete from collectives where Co_CleCol="+str(id_collective[0])
-        sql.executesql(requete)
-else:
-    print u'aucune collective ancienne abandon'
-
-
-#!/usr/bin/python
-from datetime import date
-import os
-import anim_sql as sql
-
-#le planificateur OVH repete la tache tout les mois et on ne veut supprimer que les fichiers anterieurs au 1er du mois pair precedent
-
-def moispair():
-    mois=date.today().month
-    if mois%2==0:
-		print 'mois pair'
-		return 1
-    else:
-		print 'mois impair'
-		return 0
-if moispair(): 
-	def datelimite():
-		aujourdhui=date.today()
-		premier=aujourdhui.replace(day=1)
-		return premier.isoformat()
-else :
-	def datelimite():
-		aujourdhui=date.today()
-		premier=aujourdhui.replace(day=1)
-		premier=premier.replace(month=date.today().month - 1)
-		return premier.isoformat()
-
-		
-
-repertoireUpload="/homez.25/rifrando/extranet/app/webroot/upload/randonnees"
-
-requete= "select cle from randonnees where date < '"+datelimite()+"'"
-randossanciennes=sql.executesqlselect(requete)
-if len(randossanciennes) > 0:
-    for id_rando in randossanciennes:
-        id_str=str(id_rando[0])
-        requete="select id,fichier from fichiers where randonnee_cle="+id_str
-        fichiersASupprimer=sql.executesqlselect(requete)
-        for fichier in fichiersASupprimer:
-            requete="delete from fichiers where id="+str(fichier[0])
-            sql.executesql(requete)
-        for f in os.listdir(repertoireUpload):
-            #detruit fichier sur le disque dur
-            path=repertoireUpload+"/"+f
-            if (f.startswith(id_str,0) and os.path.exists(path)):
-                try:
-                    os.unlink(path)
-                except OSError as e:
-                    print u'impossible de supprimer %s cause:%d-%s' %(e.filename,e.errno,e.strerror)
-        #suppression des commentaires correspondant a la randonnee
-        requete="delete from commentaires where randonnee_cle="+str(id_rando[0])
-        sql.executesql(requete)
-        #finalement suppression de la randonnee elle meme
-        requete="delete from randonnees where cle="+str(id_rando[0])
-        sql.executesql(requete)
-else:
-    print u'aucune randonnee ancienne abandon'
-
-}*/
+}

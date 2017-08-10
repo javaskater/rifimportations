@@ -18,7 +18,7 @@ use \Jpmena\RIF\Controller\RifDeleter;
  * the seccond request the users table with the datas of the newly (re)loaded adherents' table
  */
 
-$liste_parametres_imports = [
+$import_hikes_parameters_list = [
         [
         'fichier_csv' => $chemins_fichiers['repertoire_csv'] . "/randonnees.csv",
         'csv_to_bind_parameters' => [':cle' => [0],':date' => [1,'date'],':typeRando' => [2],':nbParticipants' => [3],':titre' => [4],':nomProgramme' => [5], ':distanceInferieure' => [6,'float'],':distanceCalculee' => [7,'float'], ':distanceSuperieure' => [8,'float'], ':unite' => [9] ,'allure' => [10],':heureDepartAller' => [11,'datetime'], ':heureChgtArriveeAller' => [12,'datetime'],
@@ -34,6 +34,37 @@ $liste_parametres_imports = [
     ]
 ];
 
+
+$select_hikes_files_parameters_list = [
+        'fichier_csv' => $chemins_fichiers['repertoire_csv'] . "/randonnees.eff.csv",
+        'csv_to_bind_parameters' => [':cle' => [0]],
+        'sql_command_text' => "SELECT fichier FROM fichiers WHERE randonnee_cle = :cleRando",
+        'log_text' => "sélection des chemins des fichiers associés aux randonnées de jour à supprimer"
+];
+
+$delete_hikes_files_parameters_list = [
+        'fichier_csv' => $chemins_fichiers['repertoire_csv'] . "/randonnees.eff.csv",
+        'csv_to_bind_parameters' => [':cle' => [0]],
+        'sql_command_text' => "DELETE FROM fichiers WHERE randonnee_cle = :cleRando",
+        'log_text' => "supression des fichiers associés aux randonnées de jours en base"
+];
+
+$delete_hikes_comments_parameters_list = [
+        'fichier_csv' => $chemins_fichiers['repertoire_csv'] . "/randonnees.eff.csv",
+        'csv_to_bind_parameters' => [':cle' => [0]],
+        'sql_command_text' => "DELETE FROM commentaires WHERE randonnee_cle = :cleRando",
+        'log_text' => "suppression des commentaires des randonnées de jours en base"
+];
+
+$delete_hikes_parameters_list = [
+        'fichier_csv' => $chemins_fichiers['repertoire_csv'] . "/randonnees.eff.csv",
+        'csv_to_bind_parameters' => [':cle' => [0]],
+        'sql_command_text' => "DELETE FROM randonnees WHERE cle = :cleRando",
+        'log_text' => "suppression des randonnées de jours en base"
+];
+
+$delete_day_hikes = [$delete_hikes_files_parameters_list, $delete_hikes_comments_parameters_list, $delete_hikes_parameters_list];
+
 $dateLog = new \DateTime();
 
 $log_array = [
@@ -46,14 +77,13 @@ $log_array = [
     'name' => "randonnees"
 ];
 
-$randonneesImporter = new RifImporter($log_array['path'], $log_array['name'], $mysql_settings);
-//$randonneesDeleter = new RifDeleter($log_array['path'], $log_array['name'], $mysql_settings);
+$hikesImporter = new RifImporter($log_array['path'], $log_array['name'], $mysql_settings);
+$new_hikes_transaction_res = $hikesImporter->importDataFromCsvAndValidate($import_hikes_parameters_list);
 
-$resulat = $randonneesImporter->importerDonneesCsvEtValider($liste_parametres_imports);
+$hikesDeleter = new RifDeleter($log_array['path'], $log_array['name'], $mysql_settings);
+$hikes_files_to_remove_arr = $hikesDeleter->findPathsToDeleteFromCsv($select_hikes_files_parameters_list);
+$deleted_hikes_transaction_res = $hikesDeleter->deleteFromCsvAndValidate($delete_day_hikes);
 
-$randonneesImporter->logHistoryCleanup($log_array['patterns'], $chemins_fichiers['repertoire_log'], $other_settings['log_history_depth']);
+var_dump($deleted_hikes_transaction_res);
 
-/*
- * Returns true or false pour le CRON OVH
- */
-return $resulat['resultat_transaction']['res_t'];
+//$hikesDeleter->logHistoryCleanup($log_array['patterns'], $chemins_fichiers['repertoire_log'], $other_settings['log_history_depth']);
