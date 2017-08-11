@@ -37,28 +37,28 @@ $import_hikes_parameters_list = [
 
 $select_hikes_files_parameters_list = [
         'fichier_csv' => $chemins_fichiers['repertoire_csv'] . "/randonnees.eff.csv",
-        'csv_to_bind_parameters' => [':cle' => [0]],
+        'csv_to_bind_parameters' => [':cleRando' => [0]],
         'sql_command_text' => "SELECT fichier FROM fichiers WHERE randonnee_cle = :cleRando",
         'log_text' => "sélection des chemins des fichiers associés aux randonnées de jour à supprimer"
 ];
 
 $delete_hikes_files_parameters_list = [
         'fichier_csv' => $chemins_fichiers['repertoire_csv'] . "/randonnees.eff.csv",
-        'csv_to_bind_parameters' => [':cle' => [0]],
+        'csv_to_bind_parameters' => [':cleRando' => [0]],
         'sql_command_text' => "DELETE FROM fichiers WHERE randonnee_cle = :cleRando",
         'log_text' => "supression des fichiers associés aux randonnées de jours en base"
 ];
 
 $delete_hikes_comments_parameters_list = [
         'fichier_csv' => $chemins_fichiers['repertoire_csv'] . "/randonnees.eff.csv",
-        'csv_to_bind_parameters' => [':cle' => [0]],
+        'csv_to_bind_parameters' => [':cleRando' => [0]],
         'sql_command_text' => "DELETE FROM commentaires WHERE randonnee_cle = :cleRando",
         'log_text' => "suppression des commentaires des randonnées de jours en base"
 ];
 
 $delete_hikes_parameters_list = [
         'fichier_csv' => $chemins_fichiers['repertoire_csv'] . "/randonnees.eff.csv",
-        'csv_to_bind_parameters' => [':cle' => [0]],
+        'csv_to_bind_parameters' => [':cleRando' => [0]],
         'sql_command_text' => "DELETE FROM randonnees WHERE cle = :cleRando",
         'log_text' => "suppression des randonnées de jours en base"
 ];
@@ -86,4 +86,8 @@ $deleted_hikes_transaction_res = $hikesDeleter->deleteFromCsvAndValidate($delete
 
 var_dump($deleted_hikes_transaction_res);
 
-//$hikesDeleter->logHistoryCleanup($log_array['patterns'], $chemins_fichiers['repertoire_log'], $other_settings['log_history_depth']);
+/* 
+* $hikesDeleter->logHistoryCleanup($log_array['patterns'], $chemins_fichiers['repertoire_log'], $other_settings['log_history_depth']);
+* test locally the logs' cleanup
+* TODO: returns the general resvalue 
+*/

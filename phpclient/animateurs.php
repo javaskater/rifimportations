@@ -61,5 +61,8 @@ $adherentsImporter->logHistoryCleanup($log_array['patterns'], $chemins_fichiers[
  */
 return $resulat['resultat_transaction']['res_t'];
 
-
+/*
+* test locally the logs' cleanup
+* TODO: returns the general resvalue 
+*/
 

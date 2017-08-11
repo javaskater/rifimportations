@@ -57,6 +57,7 @@ class RifDeleter {
         $this->prepareRequestFromCsvFile($parametres_imports);
         $resultat_transaction_array = $this->my_database_model->fetchAllAndAggregate(0);
         return $resultat_transaction_array;
+        /* unlink files here ...*/
     }
 
 }

@@ -133,6 +133,7 @@ class Database {
                     $i++;
                 } 
             }
+            $this->stmt_queries = [];
         }
         return array('res_f'=> $global_result_from_fetch,'reqs_t' => $fetchRequestsExecuted);
     }
